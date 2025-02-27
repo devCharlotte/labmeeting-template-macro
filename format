@@ -1,0 +1,33 @@
+Sub PasteSelectedShapeToAllSlides()
+    Dim ppt As Presentation
+    Dim sld As slide
+    Dim shp As shape
+    Dim selShape As ShapeRange
+    Dim originalLeft As Single, originalTop As Single
+
+    ' 현재 프레젠테이션 가져오기
+    Set ppt = ActivePresentation
+
+    ' 선택된 도형 가져오기
+    If ActiveWindow.Selection.Type <> ppSelectionShapes Then
+        MsgBox "도형을 먼저 선택하세요!", vbExclamation, "오류"
+        Exit Sub
+    End If
+
+    Set selShape = ActiveWindow.Selection.ShapeRange
+
+    ' 선택된 도형의 원래 위치 저장
+    originalLeft = selShape.Left
+    originalTop = selShape.Top
+
+    ' 모든 슬라이드에 선택한 도형을 같은 위치에 붙여넣기
+    For Each sld In ppt.Slides
+        selShape.Copy ' 선택한 도형 복사
+        Set shp = sld.Shapes.Paste(1) ' 붙여넣기
+        shp.Left = originalLeft ' 원래 위치 유지
+        shp.Top = originalTop
+    Next sld
+
+    MsgBox "모든 슬라이드에 선택한 도형이 원래 위치 그대로 붙여넣어졌습니다!", vbInformation, "완료"
+End Sub
+
