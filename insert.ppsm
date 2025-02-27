@@ -1,0 +1,55 @@
+Sub InsertImagesToSlides()
+    Dim ppt As Presentation
+    Dim slideIndex As Integer
+    Dim imageFile As String
+    Dim imageFolder As String
+    Dim shape As Shape
+    Dim slide As slide
+
+    ' 이미지가 있는 폴더 경로 설정 (사용자명 및 경로 변경 필요)
+    imageFolder = "C:\Users\사용자명\Pictures\이미지폴더" ' 경로 수정!
+
+    ' 현재 열려 있는 PowerPoint 프레젠테이션 가져오기
+    Set ppt = ActivePresentation
+
+    ' 폴더 내 첫 번째 이미지 파일 찾기 (JPG, PNG, BMP 등 확장자 필터링)
+    imageFile = Dir(imageFolder & "\*.jpg") ' JPG 파일부터 찾기
+
+    ' 이미지 삽입 반복
+    slideIndex = 1
+    Do While imageFile <> ""
+        ' 빈 슬라이드 추가
+        Set slide = ppt.Slides.Add(slideIndex, ppLayoutBlank)
+
+        ' 이미지 삽입 (슬라이드 크기에 맞춤)
+        Set shape = slide.Shapes.AddPicture(imageFolder & "\" & imageFile, _
+                                            msoFalse, msoCTrue, 0, 0, ppt.PageSetup.SlideWidth, ppt.PageSetup.SlideHeight)
+
+        ' 다음 이미지 파일 불러오기
+        imageFile = Dir()
+        slideIndex = slideIndex + 1
+    Loop
+
+    ' PNG 파일도 추가하기
+    imageFile = Dir(imageFolder & "\*.png")
+    Do While imageFile <> ""
+        Set slide = ppt.Slides.Add(slideIndex, ppLayoutBlank)
+        Set shape = slide.Shapes.AddPicture(imageFolder & "\" & imageFile, _
+                                            msoFalse, msoCTrue, 0, 0, ppt.PageSetup.SlideWidth, ppt.PageSetup.SlideHeight)
+        imageFile = Dir()
+        slideIndex = slideIndex + 1
+    Loop
+
+    ' BMP 파일도 추가하기 (필요하면 추가)
+    imageFile = Dir(imageFolder & "\*.bmp")
+    Do While imageFile <> ""
+        Set slide = ppt.Slides.Add(slideIndex, ppLayoutBlank)
+        Set shape = slide.Shapes.AddPicture(imageFolder & "\" & imageFile, _
+                                            msoFalse, msoCTrue, 0, 0, ppt.PageSetup.SlideWidth, ppt.PageSetup.SlideHeight)
+        imageFile = Dir()
+        slideIndex = slideIndex + 1
+    Loop
+
+    MsgBox "모든 이미지가 삽입되었습니다!", vbInformation, "완료"
+
+End Sub
