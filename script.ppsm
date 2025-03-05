@@ -1,0 +1,42 @@
+Sub ExportPresenterNotes()
+    Dim slide As slide
+    Dim notesText As String
+    Dim filePath As String
+    Dim fileNumber As Integer
+    
+    ' 파일 저장 경로 설정 (현재 문서와 동일한 경로)
+    filePath = ActivePresentation.Path & "\Joonhee_scripts.txt"
+    
+    ' 파일 번호 할당
+    fileNumber = FreeFile
+    
+    ' 파일 열기 (새 파일 생성)
+    Open filePath For Output As #fileNumber
+    
+    ' 각 슬라이드를 반복하며 발표자 노트 추출
+    For Each slide In ActivePresentation.Slides
+        Dim notes As String
+        
+        ' 발표자 노트 가져오기
+        If Not slide.NotesPage.Shapes.Placeholders(2) Is Nothing Then
+            notes = slide.NotesPage.Shapes.Placeholders(2).TextFrame.TextRange.Text
+        Else
+            notes = "(발표자 노트 없음)"
+        End If
+        
+        ' 원하는 형식으로 저장
+        notesText = "-----------------" & vbCrLf
+        notesText = notesText & "p. " & slide.SlideIndex & vbCrLf
+        notesText = notesText & notes & vbCrLf & vbCrLf
+` 맨 마지막 부분에 & vbCrLf 하나 더 넣음        
+        ' 파일에 쓰기
+        Print #fileNumber, notesText
+    Next slide
+    
+    ' 파일 닫기
+    Close #fileNumber
+    
+    ' 완료 메시지 출력
+    MsgBox "발표자 노트가 '" & filePath & "'에 저장되었습니다.", vbInformation, "완료"
+End Sub
+
